@@ -13,7 +13,7 @@ keywords = ["Programming", "Coding", "Polytechnic", "Computing", "University", "
 
 
 bot_token = os.getenv('BOT_TOKEN')
-your_user_id = os.getenv('USER_ID')
+user_id = os.getenv('USER_ID')
 
 client = TelegramClient('multi_channel_monitor', api_id, api_hash)
 
@@ -25,6 +25,7 @@ async def handler(event):
     if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
         channel = event.chat.username
         if (channel in channels_monitor):
+            print(f'Channel: {channel}')
             if any(keyword.lower() in message.lower() for keyword in keywords):
                 message = f"\n📢 {message}" 
                 print(message)
@@ -34,7 +35,7 @@ async def handler(event):
 def send_bot_notification(message):
     url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
     payload = {
-        'chat_id': your_user_id,
+        'chat_id': user_id,
         'text': f'{message}'
     }
     try:
