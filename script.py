@@ -8,7 +8,7 @@ load_dotenv()
 # Replace these with your values
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
-channels_monitor = ['starttuition', 'PTHTassignments', 'elitetutorsg', 'tuittysg', 'myqualitytutor_sg', 'CocoAssignments', 'TuitionJob', 'newtuitionassignments']
+channels_monitor = ['starttuition', 'PTHTassignments', 'elitetutorsg', 'tuittysg', 'myqualitytutor_sg', 'CocoAssignments', 'TuitionJob', 'newtuitionassignments', 'TutorSociety']
 keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "University", "Python", "R Programming", "Javascript", "Node", "React", "ReactJS", "Web Development", "HTML", "CSS", "SQL", "Data Structure", "Algorithms"]
 
 
@@ -26,10 +26,13 @@ async def handler(event):
         channel = event.chat.username
         if (channel in channels_monitor):
             print(f'Channel: {channel}')
-            if any(keyword.lower() in message.lower() for keyword in keywords):
-                message = f"\n📢 {message}" 
-                print(message)
-                send_bot_notification(message)
+            for keyword in keywords:
+                if keyword.lower() in message.lower():
+                    print(f'Keyword matched: {keyword}')
+                    message = f"\n📢 {message}" 
+                    print(message)
+                    send_bot_notification(message)
+                    break
 
 
 def send_bot_notification(message):
