@@ -8,11 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
+      - name: Deploy & Restart Bot
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -20,9 +21,17 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/tuition-notification-svc
+            echo "🔄 Pulling latest changes..."
             git pull origin master
+
+            echo "📦 Updating dependencies..."
             pip install -r requirements.txt
-            # Kill any running instance of the script
+
+            echo "🛑 Stopping any running instance..."
             pkill -f script.py || true
-            # Start it in background
+
+            echo "🚀 Starting bot in background..."
             nohup python3 script.py > bot.log 2>&1 &
+            disown
+
+            echo "✅ Deployment complete!"
