@@ -30,8 +30,8 @@ jobs:
             echo "🛑 Stopping any running instance..."
             pkill -f script.py || true
 
-            echo "🚀 Starting bot in background..."
-            nohup python3 script.py > bot.log 2>&1 &
-            disown
+            # echo "🚀 Starting bot in background..."
+            # nohup python3 script.py > bot.log 2>&1 &
+            # disown
 
             echo "✅ Deployment complete!"
