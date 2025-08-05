@@ -21,7 +21,6 @@ jobs:
           script: |
             cd /home/ec2-user/ryan-portfolio
             git pull origin master
-            source venv/bin/activate
             pip install -r requirements.txt
             # Kill any running instance of the script
             pkill -f monitor.py || true
