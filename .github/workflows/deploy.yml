@@ -28,3 +28,4 @@ jobs:
             pip install -r requirements.txt
 
             echo "✅ Deployment complete!"
+            sudo reboot
