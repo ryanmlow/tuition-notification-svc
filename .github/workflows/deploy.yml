@@ -23,6 +23,6 @@ jobs:
             git pull origin master
             pip install -r requirements.txt
             # Kill any running instance of the script
-            pkill -f monitor.py || true
+            pkill -f script.py || true
             # Start it in background
-            nohup python3 monitor.py > bot.log 2>&1 &
+            nohup python3 script.py > bot.log 2>&1 &
