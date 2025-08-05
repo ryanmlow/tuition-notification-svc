@@ -27,7 +27,4 @@ jobs:
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
-            echo "🛑 Stopping any running instance..."
-            pkill -f script.py || true
-
             echo "✅ Deployment complete!"
