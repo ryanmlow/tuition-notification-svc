@@ -4,7 +4,7 @@ import requests
 import os
 
 load_dotenv()
-
+print('Running bot script...')
 # Replace these with your values
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
@@ -19,7 +19,9 @@ client = TelegramClient('multi_channel_monitor', api_id, api_hash)
 
 @client.on(events.NewMessage())
 async def handler(event):
+    print('in handler')
     sender = await event.get_input_chat()
+    print(sender)
 
     message = event.message.message
     if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
