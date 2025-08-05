@@ -19,7 +19,7 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ec2-user/ryan-portfolio
+            cd /home/ec2-user/tuition-notification-svc
             git pull origin master
             pip install -r requirements.txt
             # Kill any running instance of the script
