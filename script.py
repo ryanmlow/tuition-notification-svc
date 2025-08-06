@@ -9,8 +9,7 @@ print('Running tuition notification script...')
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
 channels_monitor = ['starttuition', 'PTHTassignments', 'elitetutorsg', 'tuittysg', 'myqualitytutor_sg', 'CocoAssignments', 'TuitionJob', 'newtuitionassignments', 'TutorSociety']
-keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "University", "Python", "R Programming", "Javascript", "Node", "React", "ReactJS", "Web Development", "HTML", "CSS", "SQL", "Data Structure", "Algorithms", "Assignment"]
-
+keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "University", "Python", "R Programming", "Javascript", "Node", "React", "ReactJS", "Web Development", "HTML", "CSS", "SQL", "Data Structure", "Algorithms"]
 
 bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
