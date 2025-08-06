@@ -21,6 +21,10 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/tuition-notification-svc
+
+            echo "Killing current script"
+            pkill -f script.py
+
             echo "🔄 Pulling latest changes..."
             git pull origin master
 
