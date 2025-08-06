@@ -27,6 +27,10 @@ jobs:
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
+            # Remove user-data.log if it exists and create a new one
+            rm -f /var/log/user-data.log
+            touch /var/log/user-data.log
+
             nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
 
             echo "✅ Deployment complete!"
