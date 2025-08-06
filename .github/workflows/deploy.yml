@@ -27,6 +27,8 @@ jobs:
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
-            aws ec2 reboot-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
+            nohup /usr/bin/python3 script.py >> "$LOG_FILE" 2>&1 &
+
+            # aws ec2 reboot-instances --instance-ids ${{ secrets.EC2_INSTANCE_ID }}
 
             echo "✅ Deployment complete!"
