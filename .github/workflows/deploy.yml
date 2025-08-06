@@ -23,7 +23,7 @@ jobs:
             cd /home/ec2-user/tuition-notification-svc
 
             echo "Killing current script"
-            pkill -f script.py
+            pkill -f script.py || true
 
             echo "🔄 Pulling latest changes..."
             git pull origin master
