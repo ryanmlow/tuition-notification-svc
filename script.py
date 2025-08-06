@@ -4,7 +4,7 @@ import requests
 import os
 
 load_dotenv()
-print('Running bot script...')
+print('Running tuition notification script...')
 # Replace these with your values
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
