@@ -22,8 +22,13 @@ jobs:
           script: |
             cd /home/ec2-user/tuition-notification-svc
 
-            echo "Killing current script"
-            pkill -f script.py || true
+            if pgrep -f script.py > /dev/null; then
+              echo "Killing current script"
+              pkill -f script.py
+            else
+              echo "No script.py process found"
+            fi
+
 
             echo "🔄 Pulling latest changes..."
             git pull origin master
