@@ -28,7 +28,9 @@ jobs:
             pip install -r requirements.txt
 
             # Remove user-data.log if it exists and create a new one
-            sudo rm -f /var/log/user-data.log
+            if [ -f /var/log/user-data.log ]; then
+              sudo rm -f /var/log/user-data.log
+            fi
             sudo touch /var/log/user-data.log
 
             nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
