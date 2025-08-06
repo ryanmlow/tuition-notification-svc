@@ -21,12 +21,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/tuition-notification-svc
-
-            if pgrep -f script.py > /dev/null; then
-              echo "Killing current script"
+            # Check if script.py is actively running and kill it if it is
+            if pgrep -x python3 | xargs -r ps -o pid,cmd -p | grep -w "script.py" > /dev/null; then
+              echo "Killing actively running script.py"
               pkill -f script.py
             else
-              echo "No script.py process found"
+              echo "No actively running script.py process found"
             fi
 
 
