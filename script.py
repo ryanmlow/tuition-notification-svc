@@ -2,10 +2,13 @@ from telethon import TelegramClient, events
 from dotenv import load_dotenv
 import requests
 import os
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 load_dotenv()
 print('Running tuition notification script...')
-# Replace these with your values
+
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
 channels_monitor = ['starttuition', 'PTHTassignments', 'elitetutorsg', 'tuittysg', 'myqualitytutor_sg', 'CocoAssignments', 'TuitionJob', 'newtuitionassignments', 'TutorSociety']
@@ -14,26 +17,32 @@ keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "Univer
 bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
 
-client = TelegramClient('multi_channel_monitor', api_id, api_hash)
+with TelegramClient('multi-channel-monitor', api_id, api_hash) as client:
+  
+    print('Client created successfully')
+    print("🚀 Listening for messages...")
 
-@client.on(events.NewMessage())
-async def handler(event):
-    print('in handler')
-    sender = await event.get_input_chat()
-    print(sender)
+    @client.on(events.NewMessage())
+    async def handler(event):
+        print('in handler')
+        sender = await event.get_input_chat()
+        print(sender)
 
-    message = event.message.message
-    if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
-        channel = event.chat.username
-        if (channel in channels_monitor):
-            print(f'Channel: {channel}')
-            for keyword in keywords:
-                if keyword.lower() in message.lower():
-                    print(f'Keyword matched: {keyword}')
-                    message = f"\n📢 {message}" 
-                    print(message)
-                    send_bot_notification(message)
-                    break
+        message = event.message.message
+        if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
+            channel = event.chat.username
+            if (channel in channels_monitor):
+                print(f'Channel: {channel}')
+                for keyword in keywords:
+                    if keyword.lower() in message.lower():
+                        print(f'Keyword matched: {keyword}')
+                        message = f"\n📢 {message}" 
+                        print(message)
+                        send_bot_notification(message)
+                        break
+
+    client.start()
+    client.run_until_disconnected()
 
 
 def send_bot_notification(message):
@@ -50,9 +59,6 @@ def send_bot_notification(message):
         print("❌ Error sending notification:", str(e))
 
 
-client.start()
-print("🚀 Listening for messages...")
-client.run_until_disconnected()
 
 
 
