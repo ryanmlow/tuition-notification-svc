@@ -35,6 +35,6 @@ jobs:
             sudo touch /var/log/user-data.log
             sudo chmod 666 /var/log/user-data.log
 
-            nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
+            # nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
 
             echo "✅ Deployment complete!"
