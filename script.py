@@ -9,7 +9,7 @@ logging.getLogger('telethon').setLevel(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 load_dotenv()
-print('Running tuition notification script...')
+logger.info('Running tuition notification script...')
 
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
