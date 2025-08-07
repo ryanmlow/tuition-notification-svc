@@ -4,7 +4,9 @@ import requests
 import os
 import logging
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('telethon').setLevel(level=logging.WARNING)
 
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 print('Running tuition notification script...')
@@ -19,44 +21,47 @@ user_id = os.getenv('USER_ID')
 
 with TelegramClient('multi-channel-monitor', api_id, api_hash) as client:
   
-    print('Client created successfully')
-    print("🚀 Listening for messages...")
+    logger.info('Client created successfully')
+    logger.info("🚀 Listening for messages...")
 
     @client.on(events.NewMessage())
     async def handler(event):
-        print('in handler')
+        logger.info('in handler')
         sender = await event.get_input_chat()
-        print(sender)
+        logger.info(sender)
 
         message = event.message.message
         if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
             channel = event.chat.username
             if (channel in channels_monitor):
-                print(f'Channel: {channel}')
+                logger.info(f'Channel: {channel}')
                 for keyword in keywords:
                     if keyword.lower() in message.lower():
-                        print(f'Keyword matched: {keyword}')
+                        logger.info(f'Keyword matched: {keyword}')
                         message = f"\n📢 {message}" 
-                        print(message)
+                        logger.info(message)
                         send_bot_notification(message)
                         break
+
+
+    def send_bot_notification(message):
+        url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+        payload = {
+            'chat_id': user_id,
+            'text': f'{message}'
+        }
+        try:
+            response = requests.post(url, data=payload)
+            if response.status_code != 200:
+                logger.warning("⚠️ Failed to send notification:", response.text)
+        except Exception as e:
+            logger.error("❌ Error sending notification:", str(e))
 
     client.start()
     client.run_until_disconnected()
 
 
-def send_bot_notification(message):
-    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-    payload = {
-        'chat_id': user_id,
-        'text': f'{message}'
-    }
-    try:
-        response = requests.post(url, data=payload)
-        if response.status_code != 200:
-            print("⚠️ Failed to send notification:", response.text)
-    except Exception as e:
-        print("❌ Error sending notification:", str(e))
+
 
 
 
