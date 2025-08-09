@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-
 api_id = int(os.getenv("API_ID"))
 api_hash = os.getenv('API_HASH')
 channels_monitor = ['starttuition', 'PTHTassignments', 'elitetutorsg', 'tuittysg', 'myqualitytutor_sg', 'CocoAssignments', 'TuitionJob', 'newtuitionassignments', 'TutorSociety']
@@ -19,50 +18,47 @@ keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "Univer
 bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
 
-def main():
-    logger.info('Running tuition notification script...')
-    with TelegramClient('multi-channel-monitor', api_id, api_hash) as client:
-  
-        logger.info('Client created successfully')
-        logger.info("🚀 Listening for messages...")
+client = TelegramClient('test', api_id, api_hash)
 
-        @client.on(events.NewMessage)
-        async def handler(event):
-            logger.info('in handler')
-            sender = await event.get_input_chat()
-            logger.info(sender)
+logger.info('Client created successfully')
+logger.info("🚀 Listening for messages...")
 
-            message = event.message.message
-            if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
-                channel = event.chat.username
-                if (channel in channels_monitor):
-                    logger.info(f'Channel: {channel}')
-                    for keyword in keywords:
-                        if keyword.lower() in message.lower():
-                            logger.info(f'Keyword matched: {keyword}')
-                            message = f"\n📢 {message}" 
-                            logger.info(message)
-                            send_bot_notification(message)
-                            break
 
-        def send_bot_notification(message):
-            url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
-            payload = {
-                'chat_id': user_id,
-                'text': f'{message}'
-            }
-            try:
-                response = requests.post(url, data=payload)
-                if response.status_code != 200:
-                    logger.warning("⚠️ Failed to send notification:", response.text)
-            except Exception as e:
-                logger.error("❌ Error sending notification:", str(e))
+@client.on(events.NewMessage())
+async def handler(event):
+    logger.info('in handler')
+    sender = await event.get_input_chat()
+    logger.info(sender)
 
-        client.start()
-        client.run_until_disconnected()
+    message = event.message.message
+    if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
+        channel = event.chat.username
+        if (channel in channels_monitor):
+            logger.info(f'Channel: {channel}')
+            for keyword in keywords:
+                if keyword.lower() in message.lower():
+                    logger.info(f'Keyword matched: {keyword}')
+                    message = f"\n📢 {message}" 
+                    logger.info(message)
+                    send_bot_notification(message)
+                    break
 
-if __name__ == "__main__":
-    main()
+def send_bot_notification(message):
+    url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
+    payload = {
+        'chat_id': user_id,
+        'text': f'{message}'
+    }
+    try:
+        response = requests.post(url, data=payload)
+        if response.status_code != 200:
+            logger.warning("⚠️ Failed to send notification:", response.text)
+    except Exception as e:
+        logger.error("❌ Error sending notification:", str(e))
+
+client.start()
+client.run_until_disconnected()
+
 
 
 
