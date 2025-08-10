@@ -33,17 +33,15 @@ async def handler(event):
         channel = event.chat.username
         logger.info(f'Channel: {channel}')
         message = event.message.message
-        logger.info(message)
-        send_bot_notification(message)
-        # if (channel in channels_monitor):
-        #     logger.info('Channel matched. Checking if matching keyword exists...')
-        #     for keyword in keywords:
-        #         if keyword.lower() in message.lower():
-        #             logger.info(f'Keyword matched: {keyword}. Sending to bot...')
-        #             message = f"\n📢 {message}" 
-        #             logger.info(message)
-        #             send_bot_notification(message)
-        #             break
+        if (channel in channels_monitor):
+            logger.info('Channel matched. Checking if matching keyword exists...')
+            for keyword in keywords:
+                if keyword.lower() in message.lower():
+                    logger.info(f'Keyword matched: {keyword}. Sending to bot...')
+                    message = f"\n📢 {message}" 
+                    logger.info(message)
+                    send_bot_notification(message)
+                    break
 
 def send_bot_notification(message):
     url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
