@@ -28,11 +28,12 @@ jobs:
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
-            if [ -f channels-monitior.sesson ]; then
+            if [ -f channels-monitor.session ]; then
               PID=$(fuser channels-monitor.session 2>/dev/null)
               if [ ! -z "$PID" ]; then
                 echo "🔪 Killing process $PID using channels-monitior.sesson"
                 kill $PID
+                rm channels-monitor.session
               fi
             fi
 
@@ -44,6 +45,6 @@ jobs:
             sudo touch /var/log/user-data.log
             sudo chmod 666 /var/log/user-data.log
 
-            # nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
+            nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
 
             echo "✅ Deployment complete!"
