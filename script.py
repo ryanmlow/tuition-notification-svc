@@ -18,7 +18,7 @@ keywords = ["Programming", "Coding", "Polytechnic", "Poly", "Computing", "Univer
 bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
 
-client = TelegramClient('test', api_id, api_hash)
+client = TelegramClient('channels-monitor', api_id, api_hash)
 
 logger.info('Client created successfully')
 logger.info("🚀 Listening for messages...")
@@ -26,22 +26,24 @@ logger.info("🚀 Listening for messages...")
 
 @client.on(events.NewMessage())
 async def handler(event):
-    logger.info('in handler')
+    logger.info('Message received')
     sender = await event.get_input_chat()
-    logger.info(sender)
 
-    message = event.message.message
     if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
         channel = event.chat.username
-        if (channel in channels_monitor):
-            logger.info(f'Channel: {channel}')
-            for keyword in keywords:
-                if keyword.lower() in message.lower():
-                    logger.info(f'Keyword matched: {keyword}')
-                    message = f"\n📢 {message}" 
-                    logger.info(message)
-                    send_bot_notification(message)
-                    break
+        logger.info(f'Channel: {channel}')
+        message = event.message.message
+        logger.info(message)
+        send_bot_notification(message)
+        # if (channel in channels_monitor):
+        #     logger.info('Channel matched. Checking if matching keyword exists...')
+        #     for keyword in keywords:
+        #         if keyword.lower() in message.lower():
+        #             logger.info(f'Keyword matched: {keyword}. Sending to bot...')
+        #             message = f"\n📢 {message}" 
+        #             logger.info(message)
+        #             send_bot_notification(message)
+        #             break
 
 def send_bot_notification(message):
     url = f'https://api.telegram.org/bot{bot_token}/sendMessage'
