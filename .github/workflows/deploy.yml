@@ -22,29 +22,36 @@ jobs:
           script: |
             cd /home/ec2-user/tuition-notification-svc
 
+            echo "🔄 Checking if existing session file exists"
+            if [ -f channels-monitor.session ]; then
+              PID=$(fuser channels-monitor.session 2>/dev/null)
+              echo "Session file found. PID: $PID"
+              if [ ! -z "$PID" ]; then
+                echo "🔪 Killing process $PID"
+                kill $PID
+                echo "Removing session file"
+                rm channels-monitor.session
+              fi
+            else
+              echo "No existing session file found."
+            fi
+
             echo "🔄 Pulling latest changes..."
             git pull origin master
 
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
-            if [ -f channels-monitor.session ]; then
-              PID=$(fuser channels-monitor.session 2>/dev/null)
-              if [ ! -z "$PID" ]; then
-                echo "🔪 Killing process $PID using channels-monitior.sesson"
-                kill $PID
-                rm channels-monitor.session
-              fi
-            fi
-
-
             # Remove user-data.log if it exists and create a new one
             if [ -f /var/log/user-data.log ]; then
+              echo "Removing existing data log file"
               sudo rm -f /var/log/user-data.log
             fi
+
+            echo "Creating new data log file"
             sudo touch /var/log/user-data.log
             sudo chmod 666 /var/log/user-data.log
 
-            nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
+            # nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
 
-            echo "✅ Deployment complete!"
+            echo "✅ Deployment complete! Manually start the bot by running python3 script.py from tuition-notification-svc folder"
