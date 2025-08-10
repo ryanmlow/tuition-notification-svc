@@ -29,8 +29,9 @@ jobs:
               if [ ! -z "$PID" ]; then
                 echo "🔪 Killing process $PID"
                 kill $PID
-                echo "Removing session file"
+                echo "Removing session files"
                 rm channels-monitor.session
+                rm channels-monitor.session-journal
               fi
             else
               echo "No existing session file found."

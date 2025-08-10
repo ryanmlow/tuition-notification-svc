@@ -23,18 +23,12 @@ client = TelegramClient('channels-monitor', api_id, api_hash)
 for handler in logging.root.handlers:
     handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(name)s: %(message)s'))
 
-logger.info('Client created successfully')
-logger.info("🚀 Listening for messages...")
-
-
 @client.on(events.NewMessage())
 async def handler(event):
-    logger.info('Message received')
     sender = await event.get_input_chat()
-
     if hasattr(sender, 'channel_id') and hasattr(event.chat, 'username'):  # Ensures it's from a channel
         channel = event.chat.username
-        logger.info(f'Channel: {channel}')
+        logger.info(f'Message received. Channel: {channel}')
         message = event.message.message
         if (channel in channels_monitor):
             logger.info('Channel matched. Checking if matching keyword exists...')
@@ -54,12 +48,16 @@ def send_bot_notification(message):
     }
     try:
         response = requests.post(url, data=payload)
+        if response.status_code == 200:
+            logger.info('Message sent to bot successfully.')
         if response.status_code != 200:
             logger.warning("⚠️ Failed to send notification:", response.text)
     except Exception as e:
         logger.error("❌ Error sending notification:", str(e))
 
 client.start()
+logger.info('Client created successfully')
+logger.info("🚀 Listening for messages...")
 client.run_until_disconnected()
 
 
