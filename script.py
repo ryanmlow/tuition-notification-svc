@@ -19,7 +19,7 @@ bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
 
 client = TelegramClient('channels-monitor', api_id, api_hash)
-# Set logging format to include date and time
+
 for handler in logging.root.handlers:
     handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(name)s: %(message)s'))
 
