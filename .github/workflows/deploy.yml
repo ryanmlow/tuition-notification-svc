@@ -28,6 +28,15 @@ jobs:
             echo "📦 Updating dependencies..."
             pip install -r requirements.txt
 
+            if [ -f channels-monitior.sesson ]; then
+              PID=$(fuser channels-monitor.session 2>/dev/null)
+              if [ ! -z "$PID" ]; then
+                echo "🔪 Killing process $PID using channels-monitior.sesson"
+                kill $PID
+              fi
+            fi
+
+
             # Remove user-data.log if it exists and create a new one
             if [ -f /var/log/user-data.log ]; then
               sudo rm -f /var/log/user-data.log
@@ -35,6 +44,6 @@ jobs:
             sudo touch /var/log/user-data.log
             sudo chmod 666 /var/log/user-data.log
 
-            nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
+            # nohup python3 script.py >> "/var/log/user-data.log" 2>&1 &
 
             echo "✅ Deployment complete!"
