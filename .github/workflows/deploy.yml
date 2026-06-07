@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to Lambda
 
 on:
   push:
@@ -11,46 +11,39 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Deploy & Restart Bot
-        uses: appleboy/ssh-action@v0.1.10
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ec2-user/tuition-notification-svc
+          python-version: '3.12'
 
-            echo "🔄 Checking if existing session file exists"
-            if [ -f channels-monitor.session ]; then
-              PID=$(fuser channels-monitor.session 2>/dev/null)
-              echo "Session file found. PID: $PID"
-              if [ ! -z "$PID" ]; then
-                echo "🔪 Killing process $PID"
-                kill $PID
-                echo "Removing session files"
-                rm channels-monitor.session
-                rm channels-monitor.session-journal
-              fi
-            else
-              echo "No existing session file found."
-            fi
+      - name: Set up SAM CLI
+        uses: aws-actions/setup-sam@v2
 
-            echo "🔄 Pulling latest changes..."
-            git pull origin master
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-1
 
-            echo "📦 Updating dependencies..."
-            pip install -r requirements.txt
+      - name: Sync SSM parameters
+        env:
+          API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          USER_ID: ${{ secrets.TELEGRAM_USER_ID }}
+          SESSION_STRING: ${{ secrets.TELEGRAM_SESSION_STRING }}
+        run: |
+          aws ssm put-parameter --name "/tuition-notifier/api_id"         --value "$API_ID"         --type SecureString --overwrite
+          aws ssm put-parameter --name "/tuition-notifier/api_hash"        --value "$API_HASH"        --type SecureString --overwrite
+          aws ssm put-parameter --name "/tuition-notifier/bot_token"       --value "$BOT_TOKEN"       --type SecureString --overwrite
+          aws ssm put-parameter --name "/tuition-notifier/user_id"         --value "$USER_ID"         --type SecureString --overwrite
+          aws ssm put-parameter --name "/tuition-notifier/session_string"  --value "$SESSION_STRING"  --type SecureString --overwrite
 
-            # Remove user-data.log if it exists and create a new one
-            if [ -f /var/log/user-data.log ]; then
-              echo "Removing existing data log file"
-              sudo rm -f /var/log/user-data.log
-            fi
+      - name: Build
+        run: sam build
 
-            echo "Creating new data log file"
-            sudo touch /var/log/user-data.log
-            sudo chmod 666 /var/log/user-data.log
-
-            echo "✅ Deployment complete! Manually start the bot by running python3 script.py from tuition-notification-svc folder"
+      - name: Deploy
+        run: sam deploy --no-confirm-changeset
