@@ -19,16 +19,8 @@ Key files:
 - `src/requirements.txt` — Lambda dependencies
 - `template.yaml` — SAM template (Lambda + EventBridge + IAM)
 - `samconfig.toml` — SAM deploy config (region: ap-southeast-1)
-- `migrate_session.py` — one-time local script to export SQLite session → StringSession string for SSM
-- `script.py` — legacy EC2 listener (kept for reference, not deployed)
 
 ## Local development
-
-```sh
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
 
 To invoke locally via SAM (requires AWS credentials with SSM read access):
 

@@ -53,15 +53,7 @@ On first deploy SAM creates the CloudFormation stack, Lambda function, and Event
 
 ## Local development
 
-```sh
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt   # includes python-dotenv for local .env loading
-```
-
-Required `.env` variables: `API_ID`, `API_HASH`, `BOT_TOKEN`, `USER_ID`
-
-To invoke the Lambda handler locally (requires SAM CLI and AWS credentials with SSM access):
+Requires SAM CLI and AWS credentials with SSM read access:
 
 ```sh
 sam build && sam local invoke TuitionNotifierFunction
